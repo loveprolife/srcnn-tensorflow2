@@ -15,6 +15,23 @@ import os
 import argparse
 from tensorflow.keras.callbacks import TensorBoard, ModelCheckpoint
 import matplotlib.pyplot as plt
+
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+
+gpus = tf.config.experimental.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+    except RuntimeError as e:
+        print(e)
+
+
 parser = argparse.ArgumentParser(description='SRCNN Training')
 parser.add_argument("--epoch", default=150, type=int, help="Number of epoch [15000]")
 parser.add_argument("--batch_size", default=16, type=int, help="The size of batch images [128]")
@@ -27,7 +44,7 @@ parser.add_argument("--scale", default=3, type=int, help="The size of scale fact
 parser.add_argument("--stride", default=14, type=int, help="The size of stride to apply input image [14]")
 parser.add_argument("--checkpoint_dir", default="checkpoint/", type=str, help="Name of checkpoint directory [checkpoint]")
 parser.add_argument("--sample_dir", default="sample", type=str, help="Name of sample directory [sample]")
-parser.add_argument("-w", "--load_weights", default='last', type=str, help="whether to load weights from a checkpoint, set None to initialize, set \'last\' to load last checkpoint")
+parser.add_argument("-w", "--load_weights", default=None, type=str, help="whether to load weights from a checkpoint, set None to initialize, set \'last\' to load last checkpoint")
 parser.add_argument("--save_path", default='checkpoint/models/', type=str)
 parser.add_argument("--is_train", default=True, type=bool, help="True for training, False for testing [True]")
 # parser.add_argument("--is_train", default=False, type=bool, help="True for training, False for testing [True]")
